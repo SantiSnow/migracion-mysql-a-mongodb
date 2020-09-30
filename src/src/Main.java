@@ -1,8 +1,12 @@
 package src;
 
 import java.sql.*;
+
+import javax.swing.JOptionPane;
+
 import org.bson.Document;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoDatabase;
 
 public class Main {
@@ -11,10 +15,12 @@ public class Main {
 	
 	public static void main(String[] args) {
 		
-		String mongoDB = "JavaMigrations";
-		String coleccion = "Articulos";
-		String baseDatosSql = "id13080475_basedatosprueba";
-		String tabla = "ARTICULOS";
+		JOptionPane.showMessageDialog(null, "Bienvenido, este programa migra una Base de datos de MySQL a MongoDB");
+		
+		String mongoDB = JOptionPane.showInputDialog("Ingrese nombre de la BBDD Mongo de destino");
+		String coleccion = JOptionPane.showInputDialog("Ingrese nombre de la Coleccion Mongo de destino");
+		String baseDatosSql = JOptionPane.showInputDialog("Ingrese nombre de la BBDD MySQL de origen");
+		String tabla = JOptionPane.showInputDialog("Ingrese nombre de la tabla MySQL de Origen");
 		Document producto;
 		
 		try {
@@ -50,9 +56,15 @@ public class Main {
 			
 			mongoClient.close();
 			
+			JOptionPane.showMessageDialog(null, "La base de datos fue migrada con éxito. Cerrando conexiones... Hasta pronto.");
 			
-		}catch(Exception e) {
-			System.out.println(e);
+			
+		}
+		catch(MongoCommandException e) {
+			JOptionPane.showMessageDialog(null, "La base de datos que desea crear ya existe, intente con otro nuevamente con otro nombre.");
+		}
+		catch(Exception e) {
+			JOptionPane.showMessageDialog(null, "No se encontro la base de datos de origen. Por favor, chequee el nombre de la base de datos y su tabla.");
 		}
 	}
 
