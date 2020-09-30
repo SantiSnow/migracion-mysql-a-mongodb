@@ -5,7 +5,6 @@ import java.sql.*;
 import javax.swing.JOptionPane;
 
 import org.bson.Document;
-import com.mongodb.MongoClient;
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoDatabase;
 
@@ -23,19 +22,17 @@ public class Main {
 		String tabla = JOptionPane.showInputDialog("Ingrese nombre de la tabla MySQL de Origen");
 		Document producto;
 		
+		MongoConnection conexionMongo = new MongoConnection();
+		MySqlConnection conexionSql = new MySqlConnection();
+		
+		
+		
 		try {
 			//conexion a mongodb
-			//creamos una conexion cliente a mongo db
-			MongoClient mongoClient = new MongoClient();
-			MongoDatabase dataBase = mongoClient.getDatabase(mongoDB);
-			dataBase.createCollection(coleccion);
+			MongoDatabase dataBase = conexionMongo.mongoCon(mongoDB, coleccion);
 			
 			//Conexion a mysql
-			System.out.println("Conectando a la base de datos.");
-			Connection miConexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + baseDatosSql + "?serverTimezone=UTC&useSSL=false", "root", "");
-			Statement miStatement = miConexion.createStatement();
-			String sentenciaSql = "SELECT * FROM " + tabla;
-			ResultSet miResultado = miStatement.executeQuery(sentenciaSql);
+			ResultSet miResultado = conexionSql.consulta(baseDatosSql, tabla);
 			
 			while (miResultado.next()) {
 				
@@ -52,9 +49,9 @@ public class Main {
 				
 			}
 			
-			miConexion.close();
+			conexionSql.cerrarPool();
 			
-			mongoClient.close();
+			conexionMongo.cerrarPool();
 			
 			JOptionPane.showMessageDialog(null, "La base de datos fue migrada con éxito. Cerrando conexiones... Hasta pronto.");
 			
