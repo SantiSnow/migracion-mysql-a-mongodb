@@ -10,8 +10,8 @@ public class MySqlConnection {
 
 	Connection miConexion;
 	
-	public ResultSet consulta(String baseDatosSql, String tabla) throws SQLException {
-		miConexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + baseDatosSql + "?serverTimezone=UTC&useSSL=false", "root", "");
+	public ResultSet consulta(String baseDatosSql, String tabla, String usuario, String password) throws SQLException {
+		miConexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + baseDatosSql + "?serverTimezone=UTC&useSSL=false", usuario, password);
 		Statement miStatement = miConexion.createStatement();
 		String sentenciaSql = "SELECT * FROM " + tabla;
 		
