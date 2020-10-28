@@ -1,10 +1,14 @@
 package src;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JOptionPane;
 import org.bson.Document;
 import com.mongodb.MongoCommandException;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.InsertManyOptions;
 
 public class Main {
 
@@ -21,7 +25,7 @@ public class Main {
 		String usuario = JOptionPane.showInputDialog("Ingrese ususario de la base de datos MySQL de Origen");
 		String password = JOptionPane.showInputDialog("Ingrese password de la base de datos MySQL de Origen");
 		Document producto;
-		
+		List<Document> listaDocumentos = new ArrayList<Document>();
 		//objetos para conectar a mongodb y a mysql
 		MongoConnection conexionMongo = new MongoConnection();
 		MySqlConnection conexionSql = new MySqlConnection();
@@ -49,9 +53,12 @@ public class Main {
 						.append("Contenido", miResultado.getString("CONTENIDO"));
 				
 				//insertar el documento en la coleccion
-				dataBase.getCollection(coleccion).insertOne(producto);
+				listaDocumentos.add(producto);
 				
 			}
+			
+			dataBase.getCollection(coleccion).insertMany(listaDocumentos, new InsertManyOptions().ordered(false));
+			
 			//cerrar los pool de conexiones
 			conexionSql.cerrarPool();
 			
@@ -70,8 +77,7 @@ public class Main {
 			JOptionPane.showMessageDialog(null, "El usuario y/o contraseña de MySQL no parecen correctos, por favor verifiquelos.");
 		}
 		finally {
-			
-			
+			System.out.println("Fin del programa");
 			conexionMongo.cerrarPool();
 		}
 	}
